@@ -5,11 +5,10 @@ import time
 def generate_random():
     k = 1
     # r = int((2**30 * 8)/512)
-    r = int((2**20 * 8)/512)
-    # r = 1
-    file = open("skein_random.bin", "w+b")
+    r = int((2**20 * 8)/512)  # number of hashes
+    file = open("../../test_files/skein_random.bin", "w+b")
     skein = Skein()
-    a, b, before_hash = skein.skein_512_512("skein_random.bin")
+    a, b, before_hash = skein.skein_512_512("test_files/skein_random.bin")
     start = time.time()
     for i in range(r):
         hash_1 = skein.skein_512_512("", before_hash)

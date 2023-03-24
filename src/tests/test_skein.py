@@ -1,5 +1,5 @@
 import unittest
-from skein import Skein, Threefish512
+from src.implementation.skein import Skein, Threefish512
 
 
 class TestSkein(unittest.TestCase):

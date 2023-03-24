@@ -1,4 +1,4 @@
-import skein
+from src.implementation import skein
 import random
 
 
@@ -14,7 +14,7 @@ def check_mix():
     print("\n")
     words_new = []
     for i in range(4):
-        x, y = skein.mix_fun(words[2*i], words[2*i + 1], round_n, i)
+        x, y = skein.mix_fun(words[2 * i], words[2 * i + 1], round_n, i)
         words_new.append(x)
         words_new.append(y)
     sumi = ""

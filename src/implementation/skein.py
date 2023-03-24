@@ -1,4 +1,3 @@
-import timeit
 
 class KeyTypeError(Exception):
     pass
