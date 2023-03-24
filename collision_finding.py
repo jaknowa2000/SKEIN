@@ -1,9 +1,9 @@
-import skein
 import time
 import multiprocessing
 import random
-from multiprocessing.sharedctypes import Array, Value
+from multiprocessing.sharedctypes import Value
 from math import ceil, log2
+from skein import Skein
 
 
 def collision_skein(number_messages):
@@ -15,6 +15,7 @@ def collision_skein(number_messages):
     while True:
         modified_message = modified_message.to_bytes(length=ceil((log2(modified_message+1))/8), byteorder="big")
         message_list.append(modified_message)
+        skein = Skein()
         current_hash = skein.skein_512_512("", modified_message)
         if current_hash[:nb] in hash_list:
             index = hash_list.index(current_hash[:nb])
@@ -50,7 +51,7 @@ def main():
     number_messages = Value("d", 0)
     proces_attack = multiprocessing.Process(target=collision_skein, name="Attack_skein", args=(number_messages,))
     proces_attack.start()
-    attack_time = 60 * 60 * 6
+    attack_time = 30
     proces_attack.join(attack_time)
     if proces_attack.is_alive():
         print("\nAllowable attack time: ", attack_time/(60*60), "[h] has elapsed")

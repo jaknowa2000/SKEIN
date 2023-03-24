@@ -1,7 +1,5 @@
 import unittest
-import skein
-import skein2
-from skein import Skein
+from skein import Skein, Threefish512
 
 
 class TestSkein(unittest.TestCase):
@@ -26,7 +24,8 @@ class TestSkein(unittest.TestCase):
 
     """Data for test_skein_IV was taken from Skein documentation"""
     def test_skein_IV(self):
-        self.assertEqual(Skein.skein_iv(), [0x4903ADFF749C51CE, 0x0D95DE399746DF03, 0x8FD1934127C79BCE,
+        skein = Skein()
+        self.assertEqual(skein.skein_iv(), [0x4903ADFF749C51CE, 0x0D95DE399746DF03, 0x8FD1934127C79BCE,
                                             0x9A255629FF352CB1, 0x5DB62599DF6CA7B0, 0xEABE394CA9D5C3F4,
                                             0x991112C71A75B523, 0xAE18A40B660FCC33])
 
@@ -41,7 +40,9 @@ class TestSkein(unittest.TestCase):
         message_bytes = self.list_of_byte_to_bytes(message)
         test_result_bytes = self.list_of_byte_to_bytes(test_result)
         self.write_to_file("doc1.txt", message_bytes)
+        skein = Skein()
         path_returned, n_bytes_hash, my_hash = skein.skein_512_512("doc1.txt")
+
         self.assertEqual(path_returned, "doc1.txt")
         self.assertEqual(n_bytes_hash, len(test_result_bytes))
         self.assertEqual(my_hash, test_result_bytes)
@@ -58,12 +59,11 @@ class TestSkein(unittest.TestCase):
                          A3 CC 17 80 B5 E5 FA 4C AE 05 0E 98 98 76 62 5B"""
 
         message_bytes = self.list_of_byte_to_bytes(message)
-        print(f"Message: {list(map(lambda x: str(hex(x))[2:], skein2.bytes_to_words(message_bytes)))}\n")
         test_result_bytes = self.list_of_byte_to_bytes(test_result)
-        print(f"Result SKEIN: {list(map(lambda x: str(hex(x))[2:], skein2.bytes_to_words(test_result_bytes)))}\n")
-        print(f"Result SKEIN: {list(map(lambda x: len(str(hex(x))[2:]), skein2.bytes_to_words(test_result_bytes)))}\n")
         self.write_to_file("doc2.txt", message_bytes)
+        skein = Skein()
         path_returned, n_bytes_hash, my_hash = skein.skein_512_512("doc2.txt")
+
         self.assertEqual(path_returned, "doc2.txt")
         self.assertEqual(n_bytes_hash, len(test_result_bytes))
         self.assertEqual(my_hash, test_result_bytes)
@@ -84,12 +84,11 @@ class TestSkein(unittest.TestCase):
                          10 85 6F 74 21 39 00 00 71 F4 8E 8B A2 A5 AD B7"""
 
         message_bytes = self.list_of_byte_to_bytes(message)
-        print(f"Message: {list(map(lambda x: str(hex(x))[2:], skein2.bytes_to_words(message_bytes)))}\n")
         test_result_bytes = self.list_of_byte_to_bytes(test_result)
-        print(f"Result SKEIN: {list(map(lambda x: str(hex(x))[2:], skein2.bytes_to_words(test_result_bytes)))}\n")
-        print(f"Result SKEIN: {list(map(lambda x: len(str(hex(x))[2:]), skein2.bytes_to_words(test_result_bytes)))}\n")
         self.write_to_file("doc3.txt", message_bytes)
-        path_returned, n_bytes_hash, my_hash = skein2.skein_512_512("doc3.txt")
+        skein = Skein()
+        path_returned, n_bytes_hash, my_hash = skein.skein_512_512("doc3.txt")
+
         self.assertEqual(path_returned, "doc3.txt")
         self.assertEqual(n_bytes_hash, len(test_result_bytes))
         self.assertEqual(my_hash, test_result_bytes)
@@ -109,19 +108,16 @@ class TestSkein(unittest.TestCase):
 
         message_bytes = self.list_of_byte_to_bytes(message)
         test_result_bytes = self.list_of_byte_to_bytes(test_result)
-        print(f"Result SKEIN: {list(map(lambda x: str(hex(x))[2:], skein2.bytes_to_words(test_result_bytes)))}\n")
         self.write_to_file("file1.txt", message_bytes)
+        skein = Skein()
         path_returned, n_bytes_hash, my_hash = skein.skein_512_512("file1.txt")
+
         self.assertEqual(path_returned, "file1.txt")
         self.assertEqual(n_bytes_hash, len(test_result_bytes))
         self.assertEqual(my_hash, test_result_bytes)
 
     def test_skein_512_512_file_2(self):
         message = """00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
-                     00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
-                     00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
-                     00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
-                     00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
                      00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
                      00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
                      00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
@@ -137,11 +133,10 @@ class TestSkein(unittest.TestCase):
 
         message_bytes = self.list_of_byte_to_bytes(message)
         test_result_bytes = self.list_of_byte_to_bytes(test_result)
-        # print(f"Result SKEIN: {list(map(lambda x: str(hex(x))[2:], skein2.bytes_to_words(test_result_bytes)))}\n")
         self.write_to_file("file2.txt", message_bytes)
-        print(f"Message: {list(map(lambda x: str(hex(x))[2:], skein2.bytes_to_words(message_bytes)))}\n")
+        skein = Skein()
         path_returned, n_bytes_hash, my_hash = skein.skein_512_512("file2.txt")
-        print(f"Result SKEIN: {list(map(lambda x: str(hex(x))[2:], skein2.bytes_to_words(test_result_bytes)))}\n")
+
         self.assertEqual(path_returned, "file2.txt")
         self.assertEqual(n_bytes_hash, len(test_result_bytes))
         self.assertEqual(my_hash, test_result_bytes)
@@ -162,34 +157,62 @@ class TestSkein(unittest.TestCase):
         message_bytes = self.list_of_byte_to_bytes(message)
         test_result_bytes = self.list_of_byte_to_bytes(test_result)
         self.write_to_file("file3.txt", message_bytes)
+        skein = Skein()
         path_returned, n_bytes_hash, my_hash = skein.skein_512_512("file3.txt")
+
         self.assertEqual(path_returned, "file3.txt")
         self.assertEqual(n_bytes_hash, len(test_result_bytes))
         self.assertEqual(my_hash, test_result_bytes)
 
-    def test_threefish(self):
-        tweak = skein.words_to_bytes([0x0706050403020100, 0x0F0E0D0C0B0A0908])
-        key = skein.words_to_bytes([0x1716151413121110, 0x1F1E1D1C1B1A1918, 0x2726252423222120, 0x2F2E2D2C2B2A2928,
-                                    0x3736353433323130, 0x3F3E3D3C3B3A3938, 0x4746454443424140, 0x4F4E4D4C4B4A4948])
-        plain = skein.words_to_bytes([0xF8F9FAFBFCFDFEFF, 0xF0F1F2F3F4F5F6F7, 0xE8E9EAEBECEDEEEF, 0xE0E1E2E3E4E5E6E7,
-                                      0xD8D9DADBDCDDDEDF, 0xD0D1D2D3D4D5D6D7, 0xC8C9CACBCCCDCECF, 0xC0C1C2C3C4C5C6C7])
-        my_threefish = skein.threefish(key, tweak, plain)
-        my_threefish_words = skein.bytes_to_words(my_threefish)
-        self.assertEqual(my_threefish_words, [0x2C5AD426964304E3, 0x9A2436D6D8CA01B4, 0xDD456DB00E333863,
-                                              0x794725970EB9368B, 0x043546998D0A2A27, 0x25A7C918EA204478,
-                                              0x346201A1FEDF11AF, 0x3DAF1C5C3D672789])
+    def test_threefish_512_none(self):
+        message = """00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+                     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+                     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+                     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"""
 
-    def test_threefish_none(self):
-        tweak = skein.words_to_bytes([0x0000000000000000, 0x0000000000000000])
-        key = skein.words_to_bytes([0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
-                                    0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000])
-        plain = skein.words_to_bytes([0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
-                                      0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000])
-        my_threefish = skein.threefish(key, tweak, plain)
-        my_threefish_words = skein.bytes_to_words(my_threefish)
-        self.assertEqual(my_threefish_words, [0xBC2560EFC6BBA2B1, 0xE3361F162238EB40, 0xFB8631EE0ABBD175,
-                                              0x7B9479D4C5479ED1, 0xCFF0356E58F8C27B, 0xB1B7B08430F0E7F7,
-                                              0xE9A380A56139ABF1, 0xBE7B6D4AA11EB47E])
+        key = """00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+                 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+                 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+                 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"""
+
+        tweak = [0x0000000000000000,  0x0000000000000000]
+
+        result = [0xBC2560EFC6BBA2B1,  0xE3361F162238EB40,  0xFB8631EE0ABBD175,  0x7B9479D4C5479ED1,
+                  0xCFF0356E58F8C27B,  0xB1B7B08430F0E7F7,  0xE9A380A56139ABF1,  0xBE7B6D4AA11EB47E]
+
+        threefish = Threefish512()
+        tweak = threefish.to_int(threefish.words_to_bytes(tweak))
+        message_bytes = self.list_of_byte_to_bytes(message)
+        key_bytes = self.list_of_byte_to_bytes(key)
+        obtained_result = threefish.threehish_512(key_bytes, message_bytes, tweak)
+        obtained_result_words = threefish.bytes_to_words(obtained_result)
+
+        self.assertEqual(result, obtained_result_words)
+
+    def test_threefish_512(self):
+        message = """FF FE FD FC FB FA F9 F8 F7 F6 F5 F4 F3 F2 F1 F0
+                     EF EE ED EC EB EA E9 E8 E7 E6 E5 E4 E3 E2 E1 E0
+                     DF DE DD DC DB DA D9 D8 D7 D6 D5 D4 D3 D2 D1 D0
+                     CF CE CD CC CB CA C9 C8 C7 C6 C5 C4 C3 C2 C1 C0"""
+
+        key_words = [0x1716151413121110, 0x1F1E1D1C1B1A1918, 0x2726252423222120, 0x2F2E2D2C2B2A2928,
+                     0x3736353433323130, 0x3F3E3D3C3B3A3938, 0x4746454443424140, 0x4F4E4D4C4B4A4948]
+
+        tweak = [0x0706050403020100,  0x0F0E0D0C0B0A0908]
+
+        result = [0x2C5AD426964304E3, 0x9A2436D6D8CA01B4, 0xDD456DB00E333863, 0x794725970EB9368B,
+                  0x043546998D0A2A27, 0x25A7C918EA204478, 0x346201A1FEDF11AF, 0x3DAF1C5C3D672789]
+
+        threefish = Threefish512()
+        tweak = threefish.to_int(threefish.words_to_bytes(tweak))
+        message_bytes = self.list_of_byte_to_bytes(message)
+        key_bytes = threefish.words_to_bytes(key_words)
+        obtained_result = threefish.threehish_512(key_bytes, message_bytes, tweak)
+        obtained_result_words = threefish.bytes_to_words(obtained_result)
+
+        self.assertEqual(result, obtained_result_words)
+
+
 
 
 if __name__ == '__main__':

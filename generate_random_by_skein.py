@@ -1,13 +1,14 @@
-import skein
+from skein import Skein
 import time
 
 
 def generate_random():
     k = 1
-    r = int((2**30 * 8)/512)
-    # r = int((2**20 * 8)/512)
+    # r = int((2**30 * 8)/512)
+    r = int((2**20 * 8)/512)
     # r = 1
     file = open("skein_random.bin", "w+b")
+    skein = Skein()
     a, b, before_hash = skein.skein_512_512("skein_random.bin")
     start = time.time()
     for i in range(r):

@@ -1,5 +1,12 @@
 import timeit
 
+class KeyTypeError(Exception):
+    pass
+
+
+class InvalidKeyLength(Exception):
+    pass
+
 
 class Threefish512:
     def __init__(self):
@@ -117,6 +124,41 @@ class Threefish512:
         c_vector = [sum(i) % 2**64 for i in zip(v_vector, self.key_schedule(key, tweak, self.n_rounds//4))]
         c_value = self.words_to_bytes(c_vector)
         return c_value
+
+    def check_key(self, key):
+        if not isinstance(key, bytes):
+            try:
+                key = bytes(key, encoding='utf-8')
+            except TypeError:
+                print("The type of key data is invalid!!!!!!!!!!")
+                raise
+        if len(key) != 64:
+            raise InvalidKeyLength("Length of key is different than 64 bytes")
+        return key
+
+    def threehish_512(self, key, message, *args):
+        key = self.check_key(key)
+        tweak_s = 48 * 2 ** 120
+        nb = 64
+        message = self.padding(message)
+        nm = len(message)
+        message = self.split_message(message)
+        cryptogram = b""
+        for i in range(len(message)):
+            if i == 0:
+                a_i = 1
+            else:
+                a_i = 0
+            if i == len(message) - 1:
+                b_k_1 = 1
+            else:
+                b_k_1 = 0
+            tweak = tweak_s + min(nm, (i + 1) * nb) + a_i * 2 ** 126 + b_k_1 * 2 ** 127
+            if args:
+                tweak = args[0]
+            encrypted_block = self.threefish_block(key, self.to_bytes(tweak, 16), message[i])
+            cryptogram += encrypted_block
+        return cryptogram
 
 
 class Skein(Threefish512):

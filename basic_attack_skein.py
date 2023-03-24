@@ -1,4 +1,4 @@
-import skein
+from skein import Skein
 import time
 import multiprocessing
 from multiprocessing.sharedctypes import Array, Value
@@ -8,6 +8,7 @@ from math import ceil, log2
 def attack_skein(start_val, number_messages):
     start_message = bytes(start_val)
     print("\nStart message: ", str(start_message))
+    skein = Skein()
     attacked_hash = skein.skein_512_512("", start_message)
     modified_message = int.from_bytes(start_message, "big") + 1
     start = time.time()
@@ -39,7 +40,7 @@ def main():
     number_messages = Value("d", 0)
     proces_attack = multiprocessing.Process(target=attack_skein, name="Attack_skein", args=(message, number_messages))
     proces_attack.start()
-    attack_time = 60 * 60 * 6
+    attack_time = 30
     proces_attack.join(attack_time)
     if proces_attack.is_alive():
         print("\nAllowable attack time: ", attack_time/(60*60), "[h] has elapsed")
