@@ -39,11 +39,11 @@ class TestSkein(unittest.TestCase):
 
         message_bytes = self.list_of_byte_to_bytes(message)
         test_result_bytes = self.list_of_byte_to_bytes(test_result)
-        self.write_to_file("doc1.txt", message_bytes)
+        self.write_to_file("test_files/doc1.bin", message_bytes)
         skein = Skein()
-        path_returned, n_bytes_hash, my_hash = skein.skein_512_512("doc1.txt")
+        path_returned, n_bytes_hash, my_hash = skein.skein_512_512("test_files/doc1.bin")
 
-        self.assertEqual(path_returned, "doc1.txt")
+        self.assertEqual(path_returned, "test_files/doc1.bin")
         self.assertEqual(n_bytes_hash, len(test_result_bytes))
         self.assertEqual(my_hash, test_result_bytes)
 
@@ -60,11 +60,11 @@ class TestSkein(unittest.TestCase):
 
         message_bytes = self.list_of_byte_to_bytes(message)
         test_result_bytes = self.list_of_byte_to_bytes(test_result)
-        self.write_to_file("doc2.txt", message_bytes)
+        self.write_to_file("test_files/doc2.bin", message_bytes)
         skein = Skein()
-        path_returned, n_bytes_hash, my_hash = skein.skein_512_512("doc2.txt")
+        path_returned, n_bytes_hash, my_hash = skein.skein_512_512("test_files/doc2.bin")
 
-        self.assertEqual(path_returned, "doc2.txt")
+        self.assertEqual(path_returned, "test_files/doc2.bin")
         self.assertEqual(n_bytes_hash, len(test_result_bytes))
         self.assertEqual(my_hash, test_result_bytes)
 
@@ -85,16 +85,16 @@ class TestSkein(unittest.TestCase):
 
         message_bytes = self.list_of_byte_to_bytes(message)
         test_result_bytes = self.list_of_byte_to_bytes(test_result)
-        self.write_to_file("doc3.txt", message_bytes)
+        self.write_to_file("test_files/doc3.bin", message_bytes)
         skein = Skein()
-        path_returned, n_bytes_hash, my_hash = skein.skein_512_512("doc3.txt")
+        path_returned, n_bytes_hash, my_hash = skein.skein_512_512("test_files/doc3.bin")
 
-        self.assertEqual(path_returned, "doc3.txt")
+        self.assertEqual(path_returned, "test_files/doc3.bin")
         self.assertEqual(n_bytes_hash, len(test_result_bytes))
         self.assertEqual(my_hash, test_result_bytes)
 
     """Data for tests named "...file_xx" and "test_threefish" was taken from 
-    https://www.schneier.com/wp-content/uploads/2015/01/skein.zip, from file named "skein_golden_kat_internals.txt"""
+    https://www.schneier.com/wp-content/uploads/2015/01/skein.zip, from file named "skein_golden_kat_internals.bin"""
     def test_skein_512_512_file_1(self):
         message = """00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
                      00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
@@ -108,11 +108,11 @@ class TestSkein(unittest.TestCase):
 
         message_bytes = self.list_of_byte_to_bytes(message)
         test_result_bytes = self.list_of_byte_to_bytes(test_result)
-        self.write_to_file("file1.txt", message_bytes)
+        self.write_to_file("test_files/file1.bin", message_bytes)
         skein = Skein()
-        path_returned, n_bytes_hash, my_hash = skein.skein_512_512("file1.txt")
+        path_returned, n_bytes_hash, my_hash = skein.skein_512_512("test_files/file1.bin")
 
-        self.assertEqual(path_returned, "file1.txt")
+        self.assertEqual(path_returned, "test_files/file1.bin")
         self.assertEqual(n_bytes_hash, len(test_result_bytes))
         self.assertEqual(my_hash, test_result_bytes)
 
@@ -133,11 +133,11 @@ class TestSkein(unittest.TestCase):
 
         message_bytes = self.list_of_byte_to_bytes(message)
         test_result_bytes = self.list_of_byte_to_bytes(test_result)
-        self.write_to_file("file2.txt", message_bytes)
+        self.write_to_file("test_files/file2.bin", message_bytes)
         skein = Skein()
-        path_returned, n_bytes_hash, my_hash = skein.skein_512_512("file2.txt")
+        path_returned, n_bytes_hash, my_hash = skein.skein_512_512("test_files/file2.bin")
 
-        self.assertEqual(path_returned, "file2.txt")
+        self.assertEqual(path_returned, "test_files/file2.bin")
         self.assertEqual(n_bytes_hash, len(test_result_bytes))
         self.assertEqual(my_hash, test_result_bytes)
 
@@ -156,11 +156,11 @@ class TestSkein(unittest.TestCase):
 
         message_bytes = self.list_of_byte_to_bytes(message)
         test_result_bytes = self.list_of_byte_to_bytes(test_result)
-        self.write_to_file("file3.txt", message_bytes)
+        self.write_to_file("test_files/file3.bin", message_bytes)
         skein = Skein()
-        path_returned, n_bytes_hash, my_hash = skein.skein_512_512("file3.txt")
+        path_returned, n_bytes_hash, my_hash = skein.skein_512_512("test_files/file3.bin")
 
-        self.assertEqual(path_returned, "file3.txt")
+        self.assertEqual(path_returned, "test_files/file3.bin")
         self.assertEqual(n_bytes_hash, len(test_result_bytes))
         self.assertEqual(my_hash, test_result_bytes)
 
@@ -211,8 +211,6 @@ class TestSkein(unittest.TestCase):
         obtained_result_words = threefish.bytes_to_words(obtained_result)
 
         self.assertEqual(result, obtained_result_words)
-
-
 
 
 if __name__ == '__main__':

@@ -4,8 +4,8 @@ from skein import Skein
 
 def main():
     start = timeit.default_timer()
-    a = Skein()
-    path_returned, n_bytes_hash, my_hash = a.skein_512_512("try.txt")
+    skein = Skein()
+    path_returned, n_bytes_hash, my_hash = skein.skein_512_512("test_files/main.txt")
     stop = timeit.default_timer()
     print("\nThe hashing took: ", (stop-start), "[s]")
     print("\nPath of hashed file: ", path_returned)

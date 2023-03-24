@@ -124,7 +124,8 @@ class Threefish512:
         c_value = self.words_to_bytes(c_vector)
         return c_value
 
-    def check_key(self, key):
+    @staticmethod
+    def check_key(key):
         if not isinstance(key, bytes):
             try:
                 key = bytes(key, encoding='utf-8')
