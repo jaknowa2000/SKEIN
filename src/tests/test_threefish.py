@@ -1,6 +1,7 @@
 import unittest
-from src.implementation.skein import Threefish512
+from src.implementation.threefish import Threefish512
 from src.tests.support_test import list_of_byte_to_bytes
+from random import randint
 
 
 class TestThreefish(unittest.TestCase):
@@ -51,6 +52,51 @@ class TestThreefish(unittest.TestCase):
         obtained_result_words = threefish.bytes_to_words(obtained_result)
 
         self.assertEqual(result, obtained_result_words)
+
+    def test_enc_dec_1_threefish_512(self):
+        message = """FF FE FD FC FB FA F9 F8 F7 F6 F5 F4 F3 F2 F1 F0
+                     EF EE ED EC EB EA E9 E8 E7 E6 E5 E4 E3 E2 E1 E0
+                     DF DE DD DC DB DA D9 D8 D7 D6 D5 D4 D3 D2 D1 D0
+                     CF CE CD CC CB CA C9 C8 C7 C6 C5 C4 C3 C2 C1 C0"""
+
+        key_words = [0x1716151413121110, 0x1F1E1D1C1B1A1918, 0x2726252423222120, 0x2F2E2D2C2B2A2928,
+                     0x3736353433323130, 0x3F3E3D3C3B3A3938, 0x4746454443424140, 0x4F4E4D4C4B4A4948]
+
+        tweak = [0x0706050403020100,  0x0F0E0D0C0B0A0908]
+
+        threefish = Threefish512()
+        tweak = threefish.to_int(threefish.words_to_bytes(tweak))
+        message_bytes = list_of_byte_to_bytes(message)
+        key_bytes = threefish.words_to_bytes(key_words)
+        obtained_result = threefish.threehish_512(key_bytes, message_bytes, tweak)
+        obtained_message = threefish.decryption_threehish_512(key_bytes, obtained_result, tweak)
+        self.assertEqual(message_bytes, obtained_message)
+
+    def test_enc_dec_2_threefish_512(self):
+        message_bytes = b'\x22\xf4\x11'
+
+        key_words = [0x4921436934416746, 0x1F1E1D1C1B1A1918, 0x272625CCCCCC2120, 0x2F2E2D2C2B2A2928,
+                     0x3736353433323130, 0x3FAAAAAAAAAAAAAA, 0x4746454443424140, 0x4F4E4D12345A4948]
+
+        threefish = Threefish512()
+        key_bytes = threefish.words_to_bytes(key_words)
+        obtained_result = threefish.threehish_512(key_bytes, message_bytes)
+        obtained_message = threefish.decryption_threehish_512(key_bytes, obtained_result)
+        self.assertEqual(message_bytes, obtained_message[:len(message_bytes)])
+
+    def test_enc_dec_3_threefish_512(self):
+        message_bytes = b''
+        for i in range(1000):
+            message_bytes += randint(0, 255).to_bytes(1, 'little')
+
+        key_words = [0x6346542552353333, 0xABCCAEFC53252235, 0x35235225CC2525C3, 0x214334CACCADDE31,
+                     0x9857564756365234, 0x3425242424246246, 0x45253351315351AA, 0x413454223AEC3431]
+
+        threefish = Threefish512()
+        key_bytes = threefish.words_to_bytes(key_words)
+        obtained_result = threefish.threehish_512(key_bytes, message_bytes)
+        obtained_message = threefish.decryption_threehish_512(key_bytes, obtained_result)
+        self.assertEqual(message_bytes, obtained_message[:len(message_bytes)])
 
 
 if __name__ == '__main__':

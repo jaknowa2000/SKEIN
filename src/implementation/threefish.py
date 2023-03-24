@@ -53,9 +53,32 @@ class Threefish512:
         y1 = self.left_rotate(x1, mix_table[d % 8][j]) ^ y0
         return y0, y1
 
+    def mix_fun_inverse(self, y0, y1, d, j):
+        mix_table = [[46, 36, 19, 37],
+                     [33, 27, 14, 42],
+                     [17, 49, 36, 39],
+                     [44, 9, 54, 56],
+                     [39, 30, 34, 24],
+                     [13, 50, 10, 17],
+                     [25, 29, 39, 43],
+                     [8, 35, 56, 22]]
+        mix_table = list(map(lambda x: list((64 - y for y in x)), mix_table))
+        x1_temp = y1 ^ y0
+        x1 = self.left_rotate(x1_temp, mix_table[d % 8][j])
+        x0 = (y0 - x1) % 2 ** 64
+        return x0, x1
+
     @staticmethod
     def pi_permutation(words):
         pi = [2, 1, 4, 7, 6, 5, 0, 3]
+        new_words_order = []
+        for i in pi:
+            new_words_order.append(words[i])
+        return new_words_order
+
+    @staticmethod
+    def pi_permutation_inverse(words):
+        pi = [6, 1, 0, 7, 2, 5, 4, 3]
         new_words_order = []
         for i in pi:
             new_words_order.append(words[i])
@@ -123,6 +146,26 @@ class Threefish512:
         c_value = self.words_to_bytes(c_vector)
         return c_value
 
+    def decryption_threefish_block(self, key, tweak, ciphertext):
+        key = self.bytes_to_words(key)
+        tweak = self.bytes_to_words(tweak)
+        ciphertext = self.bytes_to_words(ciphertext)
+        nw = len(key)
+        n_rounds = 72
+        c_vector = ciphertext[:]
+        e_vector = [0] * len(ciphertext)
+        v_vector = [(i[0] - i[1]) % 2 ** 64 for i in zip(c_vector, self.key_schedule(key, tweak, n_rounds // 4))]
+        for d in range(n_rounds - 1, -1, -1):
+            f_vector = self.pi_permutation_inverse(v_vector)
+            for j in range(nw // 2):
+                e_vector[2 * j: 2 * j + 2] = self.mix_fun_inverse(f_vector[2 * j], f_vector[2 * j + 1], d, j)
+            if d % 4 == 0:
+                v_vector = [(i[0] - i[1]) % 2 ** 64 for i in zip(e_vector, self.key_schedule(key, tweak, d // 4))]
+            else:
+                v_vector = e_vector[:]
+        p_value = self.words_to_bytes(v_vector)
+        return p_value
+
     @staticmethod
     def check_key(key):
         if not isinstance(key, bytes):
@@ -158,3 +201,27 @@ class Threefish512:
             encrypted_block = self.threefish_block(key, self.to_bytes(tweak, 16), message[i])
             cryptogram += encrypted_block
         return cryptogram
+
+    def decryption_threehish_512(self, key, ciphertext, *args):
+        key = self.check_key(key)
+        tweak_s = 48 * 2 ** 120
+        nb = 64
+        ciphertext = self.padding(ciphertext)
+        nm = len(ciphertext)
+        ciphertext = self.split_message(ciphertext)
+        plaintext = b""
+        for i in range(len(ciphertext)):
+            if i == 0:
+                a_i = 1
+            else:
+                a_i = 0
+            if i == len(ciphertext) - 1:
+                b_k_1 = 1
+            else:
+                b_k_1 = 0
+            tweak = tweak_s + min(nm, (i + 1) * nb) + a_i * 2 ** 126 + b_k_1 * 2 ** 127
+            if args:
+                tweak = args[0]
+            decrypted_block = self.decryption_threefish_block(key, self.to_bytes(tweak, 16), ciphertext[i])
+            plaintext += decrypted_block
+        return plaintext
